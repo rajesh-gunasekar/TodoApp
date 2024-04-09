@@ -1,18 +1,26 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, TextInput, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Alert, TouchableOpacity } from 'react-native';
+import { useIsFocused } from "@react-navigation/native";
 import { TodoContext } from '../context/TodoContext';
 import Todo from '../models/Todo';
-import { ADD_TODO, EDIT_TODO } from '../models/Constants';
+import { ADD_TODO, EDIT_TODO, UPDATE_SELECTED_TODO } from '../models/Constants';
 
 const AddTodoScreen = () => {
     const { state, dispatch } = useContext(TodoContext);
-    const [input, setInput] = useState<string>(state.selectedTodo ? state.selectedTodo.title : "");
+    const isFocused = useIsFocused();
+    const [input, setInput] = useState<string>("");
 
     useEffect(() => {
-        if (state.selectedTodo) {
+        if (isFocused && state.selectedTodo) {
             setInput(state.selectedTodo.title);
+        } else if (!isFocused && state.selectedTodo) {
+            dispatch({ type: UPDATE_SELECTED_TODO, payload: undefined });
         }
-    }, [state]);
+
+        if (!isFocused) {
+            setInput("");
+        }
+    }, [isFocused]);
 
     const handleSubmit = () => {
         if (input.length < 3) {
@@ -65,11 +73,13 @@ const styles = StyleSheet.create({
         marginTop: 20,
         backgroundColor: "#118ab2",
         borderRadius: 10,
-        paddingVertical: 10,
+        paddingVertical: 15,
         alignItems: "center"
     },
     btn: {
-        color: "#fff"
+        color: "#fff",
+        fontSize: 16,
+        textTransform: "uppercase"
     }
 })
 

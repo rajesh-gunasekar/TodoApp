@@ -44,7 +44,7 @@ const TodoView: React.FC<Props> = ({ todo, navigation }) => {
                     }
                     <View>
                         <Text style={styles.title}>{todo.title}</Text>
-                        <Text style={styles.date}>{moment(todo.date).startOf('hour').fromNow()}</Text>
+                        <Text style={styles.date}>{moment(todo.date).fromNow()}</Text>
                         <View style={styles.actions}>
                             <Text onPress={() => handleEdit(todo)} style={styles.editAction}>Edit</Text>
                             <Text onPress={() => handleDelete(todo)} style={styles.deleteAction}>Delete</Text>
