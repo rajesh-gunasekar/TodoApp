@@ -1,4 +1,6 @@
+import { TODOS } from "../models/Constants";
 import Todo from "../models/Todo";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const getTitle = (sortValue: number) => {
     let title = ""
@@ -68,4 +70,20 @@ export const getFilteredTodos = (todos: Todo[], sortValue: number) => {
     }
 
     return filteredTodos;
+}
+
+export const storeTodosLocally = async (todos: Todo[]) => {
+    try {
+        await AsyncStorage.setItem(TODOS, JSON.stringify(todos));
+    } catch {
+        console.log("Error occured while storing data");
+    }
+}
+
+export const getTodosLocally = async () => {
+    try {
+        return await AsyncStorage.getItem(TODOS);
+    } catch {
+        console.log("Error occured while storing data");
+    }
 }

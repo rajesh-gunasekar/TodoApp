@@ -10,8 +10,6 @@ import { UPDATE_SORT_VALUE } from './app/models/Constants';
 const Tab = createBottomTabNavigator();
 
 const App = () => {
-    const { dispatch } = useContext(TodoContext);
-
     return (
         <TodoProvider>
             <NavigationContainer>
