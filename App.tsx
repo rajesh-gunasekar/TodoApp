@@ -1,17 +1,17 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import TodosScreen from './app/screens/TodosScreen';
 import AddTodoScreen from './app/screens/AddTodoScreen';
-import { TodoContext, TodoProvider } from './app/context/TodoContext';
-import { UPDATE_SORT_VALUE } from './app/models/Constants';
+import { Provider } from 'react-redux';
+import store from './app/redux/store';
 
 const Tab = createBottomTabNavigator();
 
 const App = () => {
     return (
-        <TodoProvider>
+        <Provider store={store}>
             <NavigationContainer>
                 <Tab.Navigator>
                     <Tab.Screen
@@ -26,19 +26,6 @@ const App = () => {
                                     color="#118ab2"
                                 />
                             ),
-                            // headerRight: () => (
-                            //     <MaterialIcons
-                            //         name="sort"
-                            //         size={24}
-                            //         color="#118ab2"
-                            //         style={{ marginRight: 20 }}
-                            //         onPress={() => {
-                            //             console.log("called");
-
-                            //             dispatch({ type: UPDATE_SORT_VALUE, payload: null })
-                            //         }}
-                            //     />
-                            // )
                         }}
                     />
                     <Tab.Screen
@@ -57,7 +44,7 @@ const App = () => {
                     />
                 </Tab.Navigator>
             </NavigationContainer>
-        </TodoProvider>
+        </Provider>
     );
 };
 

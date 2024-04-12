@@ -1,20 +1,23 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, Alert, TouchableOpacity } from 'react-native';
 import { useIsFocused } from "@react-navigation/native";
-import { TodoContext } from '../context/TodoContext';
 import Todo from '../models/Todo';
-import { ADD_TODO, EDIT_TODO, UPDATE_SELECTED_TODO } from '../models/Constants';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../redux/store';
+import { updateSelectedTodo, addTodo, editTodo } from '../redux/reducers/todoReducer';
 
-const AddTodoScreen = () => {
-    const { state, dispatch } = useContext(TodoContext);
+const AddTodoScreen = ({ navigation }: { navigation: any }) => {
+    const { selectedTodo } = useSelector((state: RootState) => state.todoReducer);
+    const dispatch = useDispatch()
+
     const isFocused = useIsFocused();
     const [input, setInput] = useState<string>("");
 
     useEffect(() => {
-        if (isFocused && state.selectedTodo) {
-            setInput(state.selectedTodo.title);
-        } else if (!isFocused && state.selectedTodo) {
-            dispatch({ type: UPDATE_SELECTED_TODO, payload: undefined });
+        if (isFocused && selectedTodo) {
+            setInput(selectedTodo.title);
+        } else if (!isFocused && selectedTodo) {
+            dispatch(updateSelectedTodo(null));
         }
 
         if (!isFocused) {
@@ -30,13 +33,14 @@ const AddTodoScreen = () => {
             return
         }
 
-        if (state.selectedTodo) {
-            let updatedTodo: Todo = { ...state.selectedTodo, title: input };
-            dispatch({ type: EDIT_TODO, payload: updatedTodo })
+        if (selectedTodo) {
+            let updatedTodo: Todo = { ...selectedTodo, title: input };
+            dispatch(editTodo(updatedTodo));
+            navigation.navigate("Todos");
         } else {
             let id: string = new Date().valueOf().toString();
-            let newTodo: Todo = { id: id, title: input, completed: false, date: new Date() };
-            dispatch({ type: ADD_TODO, payload: newTodo });
+            let newTodo: Todo = { id: id, title: input, completed: false, date: (new Date()).toISOString() };
+            dispatch(addTodo(newTodo));
         }
 
         setInput('');
@@ -51,7 +55,7 @@ const AddTodoScreen = () => {
                 placeholder='eg. Fill Timesheet'
             />
             <TouchableOpacity style={styles.btnContainer} onPress={handleSubmit}>
-                <Text style={styles.btn}>{state.selectedTodo ? "Save" : "Add"}</Text>
+                <Text style={styles.btn}>{selectedTodo ? "Save" : "Add"}</Text>
             </TouchableOpacity>
         </View>
     );

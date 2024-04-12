@@ -5,6 +5,9 @@ import Todo from '../models/Todo';
 import { TodoContext } from '../context/TodoContext';
 import { DELETE_TODO, UPDATE_SELECTED_TODO, UPDATE_TODO_STATUS } from '../models/Constants';
 import TodoStatusIcon from './TodoStatusIcon';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../redux/store';
+import { updateSelectedTodo, updateTodoStatus, deleteTodo } from '../redux/reducers/todoReducer';
 
 interface Props {
     todo: Todo;
@@ -12,26 +15,27 @@ interface Props {
 }
 
 const TodoView: React.FC<Props> = ({ todo, navigation }) => {
-    const { state, dispatch } = useContext(TodoContext);
+    const { selectedTodo } = useSelector((state: RootState) => state.todoReducer);
+    const dispatch = useDispatch()
 
     useEffect(() => {
-        if (state.selectedTodo) {
+        if (selectedTodo) {
             navigation.navigate("AddTodo");
         }
-    }, [state]);
+    }, [selectedTodo]);
 
     const handleClick = (id: string) => {
-        dispatch({ type: UPDATE_TODO_STATUS, payload: id })
+        dispatch(updateTodoStatus(id));
     }
 
     const handleEdit = (todo: Todo) => {
-        dispatch({ type: UPDATE_SELECTED_TODO, payload: todo });
+        dispatch(updateSelectedTodo(todo));
     }
 
     const handleDelete = (todo: Todo) => {
         Alert.alert('Alert', `Are you sure want to delete the todo[${todo.title}]?`, [
             { text: 'Cancel', onPress: () => { } },
-            { text: 'Yes', onPress: () => { dispatch({ type: DELETE_TODO, payload: todo.id }) } },
+            { text: 'Yes', onPress: () => { dispatch(deleteTodo(todo.id)) } },
         ]);
     }
 
@@ -44,7 +48,7 @@ const TodoView: React.FC<Props> = ({ todo, navigation }) => {
                     }
                     <View>
                         <Text style={styles.title}>{todo.title}</Text>
-                        <Text style={styles.date}>{moment(todo.date).fromNow()}</Text>
+                        <Text style={styles.date}>{moment(new Date(todo.date)).fromNow()}</Text>
                         <View style={styles.actions}>
                             <Text onPress={() => handleEdit(todo)} style={styles.editAction}>Edit</Text>
                             <Text onPress={() => handleDelete(todo)} style={styles.deleteAction}>Delete</Text>

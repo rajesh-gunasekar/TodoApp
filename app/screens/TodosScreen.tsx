@@ -1,37 +1,40 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useIsFocused } from "@react-navigation/native";
 import { View, Text, StyleSheet, FlatList, TouchableWithoutFeedback } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { TodoContext } from '../context/TodoContext';
-import { UPDATE_SORT_VALUE, UPDATE_TODO_STATUS } from '../models/Constants';
 import TodoView from '../components/TodoView';
 import { getDisplayMessage, getTitle } from '../utils/Helper';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../redux/store';
+import { updateTodoStatus, updateSortValue } from '../redux/reducers/todoReducer';
 
 const TodosScreen = ({ navigation }: { navigation: any }) => {
-    const { state, dispatch } = useContext(TodoContext);
+    const { filteredTodos, sortValue } = useSelector((state: RootState) => state.todoReducer);
+    const dispatch = useDispatch()
+
     const isFocused = useIsFocused();
 
     const handleClick = (id: string) => {
-        dispatch({ type: UPDATE_TODO_STATUS, payload: id })
+        dispatch(updateTodoStatus(id));
     }
 
     return (
         <View style={styles.container}>
             <View style={styles.headerFlex}>
-                <Text style={styles.title}>{getTitle(state.sortValue)}</Text>
+                <Text style={styles.title}>{getTitle(sortValue)}</Text>
 
                 <MaterialIcons
                     name="sort"
                     size={24}
                     color="#118ab2"
-                    onPress={() => dispatch({ type: UPDATE_SORT_VALUE, payload: null })}
+                    onPress={() => dispatch(updateSortValue(null))}
                 />
             </View>
 
             {
-                state.filteredTodos.length ? (
+                filteredTodos.length ? (
                     <FlatList
-                        data={state.filteredTodos}
+                        data={filteredTodos}
                         renderItem={({ item }) => (
                             <TouchableWithoutFeedback onPress={() => handleClick(item.id)}>
                                 <TodoView todo={item} navigation={navigation} />
@@ -41,7 +44,7 @@ const TodosScreen = ({ navigation }: { navigation: any }) => {
                     />
                 ) : (
                     <View style={styles.displayMessageContainer}>
-                        <Text style={styles.displayMessage}>{getDisplayMessage(state.sortValue)}</Text>
+                        <Text style={styles.displayMessage}>{getDisplayMessage(sortValue)}</Text>
                     </View>
                 )
             }
