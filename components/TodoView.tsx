@@ -1,13 +1,12 @@
 import { Alert, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native'
-import React, { useContext, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import moment from 'moment';
 import Todo from '../models/Todo';
-import { TodoContext } from '../context/TodoContext';
-import { DELETE_TODO, UPDATE_SELECTED_TODO, UPDATE_TODO_STATUS } from '../models/Constants';
 import TodoStatusIcon from './TodoStatusIcon';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../redux/store';
-import { updateSelectedTodo, updateTodoStatus, deleteTodo } from '../redux/reducers/todoReducer';
+import { AppDispatch, RootState } from '../redux/store';
+import { updateSelectedTodo, } from '../redux/reducers/todoReducer';
+import { deleteTodos, editTodos } from '../redux/thunks/todoThunks';
 
 interface Props {
     todo: Todo;
@@ -16,16 +15,19 @@ interface Props {
 
 const TodoView: React.FC<Props> = ({ todo, navigation }) => {
     const { selectedTodo } = useSelector((state: RootState) => state.todoReducer);
-    const dispatch = useDispatch()
+    const dispatch: AppDispatch = useDispatch()
 
     useEffect(() => {
         if (selectedTodo) {
-            navigation.navigate("AddTodo");
+            navigation.navigate("EditTodo");
         }
     }, [selectedTodo]);
 
-    const handleClick = (id: string) => {
-        dispatch(updateTodoStatus(id));
+    const handleClick = (todo: Todo) => {
+        const updatedTodo = { ...todo, completed: !todo.completed };
+        console.log(updatedTodo);
+
+        dispatch(editTodos(updatedTodo));
     }
 
     const handleEdit = (todo: Todo) => {
@@ -35,12 +37,16 @@ const TodoView: React.FC<Props> = ({ todo, navigation }) => {
     const handleDelete = (todo: Todo) => {
         Alert.alert('Alert', `Are you sure want to delete the todo[${todo.title}]?`, [
             { text: 'Cancel', onPress: () => { } },
-            { text: 'Yes', onPress: () => { dispatch(deleteTodo(todo.id)) } },
+            {
+                text: 'Yes', onPress: () => {
+                    dispatch(deleteTodos(todo.id))
+                }
+            },
         ]);
     }
 
     return (
-        <TouchableWithoutFeedback onPress={() => handleClick(todo.id)}>
+        <TouchableWithoutFeedback onPress={() => handleClick(todo)}>
             <View style={styles.container}>
                 <View style={styles.row}>
                     {

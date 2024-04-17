@@ -1,22 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useIsFocused } from "@react-navigation/native";
 import { View, Text, StyleSheet, FlatList, TouchableWithoutFeedback } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import TodoView from '../components/TodoView';
 import { getDisplayMessage, getTitle } from '../utils/Helper';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../redux/store';
-import { updateTodoStatus, updateSortValue } from '../redux/reducers/todoReducer';
+import { AppDispatch, RootState } from '../redux/store';
+import { updateSortValue } from '../redux/reducers/todoReducer';
+import { getTodos } from '../redux/thunks/todoThunks';
 
 const TodosScreen = ({ navigation }: { navigation: any }) => {
+    const { user } = useSelector((state: RootState) => state.userReducer);
     const { filteredTodos, sortValue } = useSelector((state: RootState) => state.todoReducer);
-    const dispatch = useDispatch()
+    const dispatch: AppDispatch = useDispatch()
 
     const isFocused = useIsFocused();
 
-    const handleClick = (id: string) => {
-        dispatch(updateTodoStatus(id));
-    }
+    useEffect(() => {
+        if (user) {
+            dispatch(getTodos(user.id));
+        }
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -36,9 +40,7 @@ const TodosScreen = ({ navigation }: { navigation: any }) => {
                     <FlatList
                         data={filteredTodos}
                         renderItem={({ item }) => (
-                            <TouchableWithoutFeedback onPress={() => handleClick(item.id)}>
-                                <TodoView todo={item} navigation={navigation} />
-                            </TouchableWithoutFeedback>
+                            <TodoView todo={item} navigation={navigation} />
                         )}
                         keyExtractor={item => item.id}
                     />

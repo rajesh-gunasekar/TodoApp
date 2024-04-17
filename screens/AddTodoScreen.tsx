@@ -3,12 +3,14 @@ import { View, Text, StyleSheet, TextInput, Alert, TouchableOpacity } from 'reac
 import { useIsFocused } from "@react-navigation/native";
 import Todo from '../models/Todo';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../redux/store';
-import { updateSelectedTodo, addTodo, editTodo } from '../redux/reducers/todoReducer';
+import { AppDispatch, RootState } from '../redux/store';
+import { updateSelectedTodo } from '../redux/reducers/todoReducer';
+import { editTodos, postTodos } from '../redux/thunks/todoThunks';
 
 const AddTodoScreen = ({ navigation }: { navigation: any }) => {
+    const { user } = useSelector((state: RootState) => state.userReducer);
     const { selectedTodo } = useSelector((state: RootState) => state.todoReducer);
-    const dispatch = useDispatch()
+    const dispatch: AppDispatch = useDispatch()
 
     const isFocused = useIsFocused();
     const [input, setInput] = useState<string>("");
@@ -35,12 +37,15 @@ const AddTodoScreen = ({ navigation }: { navigation: any }) => {
 
         if (selectedTodo) {
             let updatedTodo: Todo = { ...selectedTodo, title: input };
-            dispatch(editTodo(updatedTodo));
+            dispatch(editTodos(updatedTodo));
             navigation.navigate("Todos");
         } else {
             let id: string = new Date().valueOf().toString();
-            let newTodo: Todo = { id: id, title: input, completed: false, date: (new Date()).toISOString() };
-            dispatch(addTodo(newTodo));
+            let userID = user?.id;
+            if (userID) {
+                let newTodo: Todo = { id: id, title: input, completed: false, date: (new Date()).toISOString(), userID: userID };
+                dispatch(postTodos(newTodo));
+            }
         }
 
         setInput('');

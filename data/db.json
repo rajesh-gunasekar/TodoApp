@@ -1,0 +1,47 @@
+{
+  "users": [
+    {
+      "id": "fae7",
+      "username": "Rajesh",
+      "password": "Rajesh3@"
+    },
+    {
+      "id": "7bf4",
+      "username": "Gokulan Periasamy",
+      "password": "Gokulan3@"
+    },
+    {
+      "id": "1279",
+      "username": "Saravana",
+      "password": "Saravana3@"
+    },
+    {
+      "id": "d91d",
+      "username": "Jaya",
+      "password": "Jaya3@"
+    }
+  ],
+  "todos": [
+    {
+      "id": "1713357649376",
+      "title": "Fill the sheet",
+      "completed": false,
+      "date": "2024-04-17T12:40:49.376Z",
+      "userID": "fae7"
+    },
+    {
+      "id": "1713357697569",
+      "title": "Finish XYZ",
+      "completed": true,
+      "date": "2024-04-17T12:41:37.569Z",
+      "userID": "fae7"
+    }
+  ],
+  "user": [
+    {
+      "id": "fae7",
+      "username": "Rajesh",
+      "password": "Rajesh3@"
+    }
+  ]
+}
