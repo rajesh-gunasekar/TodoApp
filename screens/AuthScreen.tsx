@@ -14,7 +14,7 @@ const AuthScreen = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [isSelected, setIsSelected] = useState(false);
-    const [isLogin, setIsLogin] = useState(false);
+    const [isLogin, setIsLogin] = useState(true);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -40,18 +40,6 @@ const AuthScreen = () => {
         if (isLogin) {
             dispatch(loginUser({ username, password }))
         } else {
-            // console.log("Registering the user");
-            // const data = await registerUser(username, password);
-            // console.log(data);
-
-            // if (!data.status) {
-            //     Alert.alert('Warning', data.message, [
-            //         { text: 'OK', onPress: () => { } },
-            //     ]);
-
-            //     return;
-            // }
-            // user = data.user;
             dispatch(registerUser({ username, password }));
         }
     }
